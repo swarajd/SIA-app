@@ -1,0 +1,76 @@
+<list-view>
+  <div class="list-search-header">
+    <input type="text" name="name-search" placeholder="enter a name" onkeyup={ updateSearch }>
+    <button type="submit" name="export" class="export-btn" onclick={ exportStudents }>export all as csv</button>
+  </div>
+  <div class="list-contents">
+    <table>
+      <thead>
+        <tr>
+          <th>Name</th>
+          <th>Email</th>
+          <th>Year</th>
+          <th>Paid</th>
+          <th>Delete</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr each={ _filteredStudents }>
+          <td>{ name }</td>
+          <td>{ email }</td>
+          <td>{ year }</td>
+          <td>{ paid ? 'yes' : 'no'}</td>
+          <td><button type="button" name="delete" onclick={ parent.deleteStudent }>X</button></td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <script type="es6">
+
+    import json2csv from 'json2csv'
+    import download from 'downloadjs'
+
+    this.mixin('controlMixin')
+    this.search = ''
+    this._students = [];
+    this._filteredStudents = []
+
+    this.on('mount', () => {
+      riot.control.trigger(riot.VE.LOAD_STUDENTS)
+    });
+
+    this.onControl(riot.SE.STUDENTS_CHANGED, students => {
+      this._students = students
+      this._filteredStudents = this._students;
+      this.update()
+    })
+
+    this.updateSearch = (e) => {
+      this.search = e.target.value
+      if (this.search.length === 0) {
+        this._filteredStudents = this._students;
+      } else {
+        this._filteredStudents = this._students.filter(student => {
+          return student.name.toLowerCase().includes(this.search);
+        })
+      }
+    }
+
+    this.deleteStudent = (e) => {
+      riot.control.trigger(riot.VE.REMOVE_STUDENT, e.item.name)
+    }
+
+    this.exportStudents = (e) => {
+      var fields = ['name', 'email', 'year', 'paid']
+      json2csv({
+        data: this._students,
+        fields: fields,
+      }, function(err, csv) {
+        if (err) console.log(err);
+        console.log(csv);
+        download(csv, 'students.csv', 'text/csv');
+      })
+    }
+  </script>
+</list-view>

@@ -1,0 +1,88 @@
+<create-view>
+  <div class="grid">
+    <div class="grid__col grid__col--3-of-5">
+      <form action="" method="" class="student-form">
+        <input type="text" name="name" placeholder="enter a name" onkeyup={ editTxt }/>
+
+        <input type="text" name="email" placeholder="enter an email" onkeyup={ editTxt }/>
+
+        <input type="radio" name="year" id="freshman" onclick={ editRadio }/>
+        <label for="freshman">Freshman</label><br>
+
+        <input type="radio" name="year" id="sophomore" onclick={ editRadio }/>
+        <label for="sophomore">Sophomore</label><br>
+
+        <input type="radio" name="year" id="junior" onclick={ editRadio }/>
+        <label for="junior">Junior</label><br>
+
+        <input type="radio" name="year" id="senior" onclick={ editRadio }/>
+        <label for="senior">Senior</label><br><br>
+
+        <input type="checkbox" name="paid" id="paid" checked={ paid } onclick={ togglePaid }>
+        <label for="paid">Paid</label><br>
+      </form>
+    </div>
+    <div class="grid__col grid__col--2-of-5">
+      <ul class="student-preview">
+        <li>Name: {name}</li>
+        <li>email: {email}</li>
+        <li>year: {year}</li>
+        <li>paid: {paid ? 'yes' : 'no'}</li>
+      </ul>
+    </div>
+  </div>
+  <div class="create-footer">
+    <div>
+      <button type="submit" name="create" onclick={ addStudent }>Create Student</button>
+    </div>
+    <div>{ message }</div>
+  </div>
+
+  <script type="es6">
+
+    this.name = ''
+    this.email = ''
+    this.year = ''
+    this.paid = false
+    this.message = ''
+
+    this.editTxt = (e) => {
+      this[e.target.name] = e.target.value
+    }
+
+    this.editRadio = (e) => {
+      this[e.target.name] = e.target.id
+    }
+
+    this.togglePaid = () => {
+      this.paid = !this.paid;
+    }
+
+    this.addStudent = () => {
+      if (this.validateForm()) {
+        riot.control.trigger(riot.VE.ADD_STUDENT, {
+          name: this.name,
+          email: this.email,
+          year: this.year,
+          paid: this.paid
+        });
+        this.message = 'it worked!'
+      } else {
+        this.message = 'one of the fields is incorrect'
+      }
+    }
+
+    this.validateForm = () => {
+      var nameValid = (this.name.length >= 2);
+
+      var emailRegex = /\S+@\S+\.\S+/;
+      var emailValid = emailRegex.test(this.email);
+
+      var yearValid = (this.year.length > 0);
+
+      return (nameValid && emailValid && yearValid);
+    }
+
+  </script>
+
+</create-view>

@@ -1,0 +1,49 @@
+<app>
+  <section>
+    <header>
+      <nav>
+        <ul>
+          <li><a href="#create">Add Student</a></li>
+          <li><a href="#list">Students</a></li>
+        </ul>
+      </nav>
+    </header>
+    <article>
+      <div id="mainview"></div>
+    </article>
+  </section>
+
+  <script type="es6">
+  this._currentView = null
+
+  this.resetData = () => {
+    riot.control.trigger(riot.VE.RESET_DATA)
+  }
+
+  this.loadView = (viewName, id) => {
+    if (this._currentView) {
+      this._currentView.unmount(true)
+    }
+    this._currentView = riot.mount('div#mainview', viewName, { data: id })[0]
+  }
+
+  this.studyRoute = (view, id) => {
+    switch (view) {
+      case 'create':
+        this.loadView('create-view')
+        break
+      case 'list':
+        this.loadView('list-view')
+        break
+      default:
+        this.loadView('create-view')
+    }
+  }
+
+  riot.route(this.studyRoute)
+
+  this.on('mount', () => {
+    riot.route.start(true)
+  })
+  </script>
+</app>
