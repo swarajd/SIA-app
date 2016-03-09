@@ -15,6 +15,7 @@
     "eslint": "^2.2.0",
     "eslint-config-airbnb": "^6.0.2",
     "eslint-plugin-riot": "^0.1.4",
+    "gulp": "^3.9.1",
     "light-server": "^1.1.5",
     "riot": "^2.3.16",
     "riotjs-loader": "^1.2.0",
